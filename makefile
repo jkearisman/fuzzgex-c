@@ -17,7 +17,7 @@ $(EXE): $(OBJS)
 	$(CC) $(B_FLAGS) $^ -o $@
 
 clean:
-	rm $(EXE)
 	rm $(OBJS)
+	rm $(EXE)
 
 

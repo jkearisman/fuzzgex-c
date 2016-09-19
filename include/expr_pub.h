@@ -13,4 +13,6 @@ struct expr* parse( const char* expr_str );
 
 void free_expr( struct expr* e );
 
+void print_array( int* arr,  size_t size );
+
 #endif
