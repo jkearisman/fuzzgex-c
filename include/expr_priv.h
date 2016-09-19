@@ -19,13 +19,6 @@ struct star_expr {
 	struct expr *sub;
 };
 
-struct pint_ll {
-	int* elt;
-	int len_elt;
-	struct pint_ll* next;
-	int i;
-};
-
 
 //struct ed_resp* expr_ed( struct expr* e, const char* str, int* size );
 int* expr_ed( const struct expr* e, const char* str, size_t* processed, int acc );

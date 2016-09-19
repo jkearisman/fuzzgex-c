@@ -25,6 +25,25 @@ int edit_ditance( struct expr* e, const char* str ) {
 }
 
 struct expr* parse( const char* expr_str ) {
+	if( expr_str[0] == '\0' ) {
+		//This isn't supported yet. Need to add emptyexpr
+		assert( 0 );
+	}
+	if( expr_str[1] == '\0' ) {
+		struct char_expr* c = malloc( sizeof *c );
+		c->type = CHAR;
+		c->c = expr_str[0];
+		return (struct expr*)c;
+	}
+	struct list_expr* l = malloc( sizeof *l );
+	struct char_expr* c = malloc( sizeof *c );
+	c->type = CHAR;
+	c->c = expr_str[0];
+	l->type = LIST;
+	l->first = (struct expr*)c;
+	l->rest = parse( expr_str + 1 );
+	return (struct expr*)l;
+
 	return NULL;
 }
 
