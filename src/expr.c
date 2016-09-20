@@ -15,19 +15,30 @@ void print_array( int* arr, size_t size) {
 }
 
 
-int edit_ditance( struct expr* e, const char* str ) {
+int edit_distance( struct expr* e, const char* str ) {
 	size_t processed = 0;
 	int* ed_list = expr_ed( e, str, &processed, 0 );
 	//TODO
-	int ret = ed_list[0];
+	size_t max_processed = processed;
+	if( max_processed < 0 ) {
+		return -1;
+	}
+	size_t len_str = strlen( str );
+	size_t min_score = ed_list[0] + len_str;
+	for( int i = 1; i <= max_processed; i++ ) {
+		if( ed_list[i] + len_str - i < min_score ) {
+			min_score = ed_list[i] + len_str - i;
+		}
+	}
 	free( ed_list );
-	return ret;
+	return min_score;
 }
 
 struct expr* parse( const char* expr_str ) {
 	if( expr_str[0] == '\0' ) {
 		//This isn't supported yet. Need to add emptyexpr
 		assert( 0 );
+		return NULL;
 	}
 	if( expr_str[1] == '\0' ) {
 		struct char_expr* c = malloc( sizeof *c );
@@ -43,8 +54,6 @@ struct expr* parse( const char* expr_str ) {
 	l->first = (struct expr*)c;
 	l->rest = parse( expr_str + 1 );
 	return (struct expr*)l;
-
-	return NULL;
 }
 
 int* expr_ed( const struct expr* e, const char* str, size_t* processed, int acc ) {
@@ -72,8 +81,6 @@ int* listexpr_ed( const struct list_expr *e, const char* str, size_t* processed,
 	*processed = 0;
 	// Get the results from the first one
 	int* first = expr_ed( e->first, str, processed, acc );
-	print_array( first, (*processed)+1 );
-	printf( "After processing first, *processed is %lu\n", *processed );
 
 	size_t len_str = strlen( str );
 	int tmp_buffer[len_str + 1];
@@ -129,4 +136,33 @@ int* charexpr_ed( const struct char_expr *e, const char* str, size_t* processed,
 	ret[0] = acc + 1;
 
 	return ret;
+}
+
+void expr_free( struct expr* e ) {
+	switch( e->type ) {
+		case CHAR:
+			charexpr_free( (struct char_expr*) e );
+			break;
+			/*
+		case STAR:
+			return starexpr_ed( (struct star_expr*) e, str, processed, acc );
+			break;
+			*/
+		case LIST:
+			listexpr_free( (struct list_expr*) e );
+			break;
+		default:
+			return;
+			//Panic!
+	}
+}
+
+void charexpr_free( struct char_expr* e ) {
+	free( e );
+}
+
+void listexpr_free( struct list_expr* e ) {
+	expr_free( e->first );
+	expr_free( e->rest );
+	free( e );
 }

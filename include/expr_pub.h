@@ -7,11 +7,12 @@ struct expr {
 	enum expr_type type;
 };
 
-int edit_distance( struct expr* e, const char* str );
 
 struct expr* parse( const char* expr_str );
 
-void free_expr( struct expr* e );
+int edit_distance( struct expr* e, const char* str );
+
+void expr_free( struct expr* e );
 
 void print_array( int* arr,  size_t size );
 
